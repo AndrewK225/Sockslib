@@ -19,7 +19,9 @@ typedef struct _params {
     std::string proto;
 } Params;
 
-
+/* this fcn should handles all the socket stuff so user just has to call
+ * create_socket
+*/
 int create_socket(Params *pm) {
     struct sockaddr_in addr;
     int sock,set_opt_on,res;
@@ -73,7 +75,6 @@ int create_socket(Params *pm) {
 
 /* In the next step, want a generic handle_event that will call other fcns.  This way, when tcp is implemented, will handle connection request as well as data*/
 
-
 int use_polling(std::string method, int (*create_sock)(Params *pm),bool (*handle_event)(int)) {
     int data;
     unsigned char buf[100];
@@ -83,7 +84,7 @@ int use_polling(std::string method, int (*create_sock)(Params *pm),bool (*handle
     pm1.local_port = 1234;
     /* hashtable of socket fds */
     std::unordered_map<int,int> sockets;
-    int sock_fd = create_sock(&pm1);
+    int sock_fd = create_sock(&pm1); //use socket creation callback
     sockets[sock_fd] = 1;
 
     if(method.compare("epoll") == 0) {
@@ -109,10 +110,9 @@ int use_polling(std::string method, int (*create_sock)(Params *pm),bool (*handle
                 perror("epoll_wait");
                 exit(1);
             }
-            for(int n = 0; n < nfds; ++n) {
-            
+            for(int n = 0; n < nfds; ++n) { 
                 if(sockets[events[n].data.fd]) {
-                    cont = handle_event(events[n].data.fd);
+                    cont = handle_event(events[n].data.fd); //handle event callback
                 } else {
                     std::cout << events[n].events << std::endl;
                 }
