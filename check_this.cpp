@@ -19,7 +19,7 @@ typedef struct _params {
     std::string proto;
 } Params;
 
-/* this fcn should handles all the socket stuff so user just has to call
+/* socket creation callback so user just has to call
  * create_socket
  * need to add tcp functionality (commented out at bottom)
 */
