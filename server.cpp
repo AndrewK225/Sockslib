@@ -77,7 +77,7 @@ int main() {
         for (int n = 0; n < nfds; ++n) {
             std::cout << "HERE" << std::endl;
             if (events[n].data.fd == serv_sock) {
-                conn_sock = recvfrom(serv_sock,buf,100,0, (struct sockaddr *) &serv_addr,&addrlen); 
+                conn_sock = read(serv_sock,buf,100); 
 
                 if (conn_sock == -1) {
                     perror("recvfrom");
